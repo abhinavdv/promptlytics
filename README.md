@@ -4,36 +4,48 @@ Multi-agent prompt analytics — track, cluster, and analyze user queries to con
 Closed-loop learning system for multi-agent orchestration
 promptmirror
 
+
+
+```mermaid
 flowchart TD
-    U[💬 User / Frontend<br/>(Chat UI, API, Teams, etc.)] --> O[⚙️ LangGraph Orchestrator<br/>• Query routing<br/>• Agent orchestration<br/>• Summarization logic]
+    %% ==== USER & ORCHESTRATOR ====
+    U[User / Frontend - Chat UI, API, Teams] --> O[LangGraph Orchestrator: Query routing, Agent orchestration, Summarization logic]
 
-    O --> A1[🟡 Agent 1<br/>(EmailAgent)]
-    O --> A2[🟡 Agent 2<br/>(MeetingAgent)]
-    O --> AN[🟡 Agent N<br/>(Other domain-specific agents)]
+    %% ==== AGENTS ====
+    O --> A1[Agent 1 - EmailAgent]
+    O --> A2[Agent 2 - MeetingAgent]
+    O --> AN[Agent N - Other domain-specific agents]
 
-    A1 --> L[🧾 LangSmith Platform<br/>• Trace logs<br/>• Model metrics<br/>• Prompt registry<br/>• Evaluation datasets]
+    %% ==== LANGSMITH LAYER ====
+    A1 --> L[LangSmith Platform: Trace logs, Model metrics, Prompt registry, Evaluation datasets]
     A2 --> L
     AN --> L
     O --> L
 
-    subgraph EVAL[🔍 Prompt Evaluation Application]
+    %% ==== PROMPT EVALUATION APP ====
+    subgraph EVAL[Prompt Evaluation Application]
         direction TB
-        I[📥 Data Ingestion<br/>• Fetch traces via LangSmith API]
-        F[🧠 Failure Analyzer<br/>• Detect incorrect runs<br/>• Cluster by scenario]
-        P[🧩 Prompt Evaluator Engine<br/>• Suggest improved prompts]
-        R[📚 Prompt Updater<br/>• Push new version to LangSmith]
+        I[Data Ingestion Service: Fetch traces via LangSmith API]
+        F[Failure Analyzer: Detect incorrect runs, Group by agent, Cluster by scenario]
+        P[Prompt Evaluator Engine: Compare failures vs current prompt, Generate improvement suggestions]
+        R[Prompt Updater: Push improved prompt to LangSmith registry, Create new version for review]
     end
 
-    I --> DB[(🗄️ Evaluation DB)]
-    F --> VEC[(🧬 Vector Store)]
-    P --> LLM[(🤖 LLM API)]
+    %% ==== STORAGE & SUPPORT ====
+    I --> DB[(Evaluation DB - MongoDB or Postgres)]
+    F --> VEC[(Vector Store - FAISS or Pinecone)]
+    P --> LLM[(LLM API - GPT-4o or Claude 3.5)]
     R --> L
 
-    subgraph UI[📊 Web Dashboard (Streamlit / Next.js)]
-        D1[View clusters]
-        D2[Review prompt updates]
+    %% ==== DASHBOARD ====
+    subgraph UI[Web Dashboard - Streamlit or Next.js]
+        direction TB
+        D1[View clusters and issue summaries]
+        D2[Compare metrics]
+        D3[Review and approve prompt updates]
     end
 
+    %% ==== DATA FLOW ====
     L --> I
     F --> P
     P --> R
